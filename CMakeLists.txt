@@ -21,9 +21,6 @@ endIf()
 
 include(CMakeDependentOption)
 
-find_package (PkgConfig REQUIRED)
-pkg_check_modules (leveldb REQUIRED IMPORTED_TARGET leveldb)
-
 add_executable(blockchain_indexer
     src/BlockchainReader.cpp
     src/BlockchainReader.h
@@ -34,5 +31,5 @@ add_executable(blockchain_indexer
 )
 
 target_link_libraries(blockchain_indexer
-    PkgConfig::leveldb
+    /usr/lib/x86_64-linux-gnu/libleveldb.a
 )
