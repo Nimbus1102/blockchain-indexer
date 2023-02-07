@@ -20,7 +20,7 @@ std::shared_ptr<BlockchainIndexer::BlockchainReader> blockchainReader;
 std::shared_ptr<BlockchainIndexer::BlockListener> indexSubscriber;
 std::string configFilePath = "/home/niven/blockchain-indexer/config/ConfigFile.xml";
 
-void runBlockchainReader()
+void runReader()
 {
     std::cout << "Starting blockchain reader." << std::endl;
     blockchainReader->logic();
@@ -29,25 +29,67 @@ void runBlockchainReader()
 
 void runIndexer()
 {
+    std::cout << "Starting indexer logic thread." << std::endl;
+    std::cout << "Closing indexer logic thread." << std::endl;
+}
+
+void checkBlockInformation()
+{
     while (true)
     {
         if (indexSubscriber->haveNewMessage())
         {
-            BlockchainIndexer::Block block;
-            indexSubscriber->getMessage(block);
+            BlockchainIndexer::Block tmp;
+            indexSubscriber->getMessage(tmp);
 
-            std::cout << block.blockHash << std::endl;
-            std::cout << block.nextBlockHash << std::endl;
-            std::cout << block.prevBlockHash << std::endl;
-            std::cout << block.merkleRoot << std::endl;
-            std::cout << block.size << std::endl;
-            std::cout << block.weight << std::endl;
-            std::cout << block.height << std::endl;
-            std::cout << block.confirmations << std::endl;
-            std::cout << block.timestamp << std::endl;
+            std::cout << tmp.blockHash << std::endl;
+            std::cout << tmp.prevBlockHash << std::endl;
+            std::cout << tmp.nextBlockHash << std::endl;
+            std::cout << tmp.merkleRoot << std::endl;
+            std::cout << tmp.size << std::endl;
+            std::cout << tmp.weight << std::endl;
+            std::cout << tmp.height << std::endl;
+            std::cout << tmp.confirmations << std::endl;
+            std::cout << tmp.timestamp << std::endl;
+
+            for (auto& transaction : tmp.transactions)
+            {
+                std::cout << "Transaction:" << std::endl;
+                std::cout << transaction.idx << std::endl;
+                std::cout << transaction.version << std::endl;
+                std::cout << transaction.lockTime << std::endl;
+                std::cout << transaction.id << std::endl;
+                std::cout << transaction.hash << std::endl;
+
+                std::cout << "Inputs:" << std::endl;
+                for (auto& in : transaction.inputs)
+                {
+                    std::cout << "Input:" << std::endl;
+                    std::cout << in.txIdx << std::endl;
+                    std::cout << in.coinbase  << std::endl;
+                    std::cout << in.sequence  << std::endl;
+                    std::cout << in.txOutputIdx  << std::endl;
+                    std::cout << in.txOutputId  << std::endl;
+                    std::cout << in.scriptSigAsm  << std::endl;
+                    std::cout << in.scriptSigHex  << std::endl;
+                }
+
+                std::cout << "Outputs:" << std::endl;
+                for (auto& out : transaction.outputs)
+                {
+                    std::cout << "Output:" << std::endl;
+                    std::cout << out.value << std::endl;
+                    std::cout << out.txOutputIdx << std::endl;
+                    std::cout << out.txOutputId << std::endl;
+                    std::cout << out.scriptPubKeyReqSig << std::endl;
+                    std::cout << out.scriptPubKeyAsm << std::endl;
+                    std::cout << out.scriptPubKeyHex << std::endl;
+                    std::cout << out.scriptPubKeyType << std::endl;
+                    std::cout << out.scriptPubKeyAddresses << std::endl;
+                }
+            }
         }
     }
-    
 }
 
 int main(const int argc, const char** const argv)
@@ -66,9 +108,9 @@ int main(const int argc, const char** const argv)
     blockchainReader->init(config.blockchainFile, config.maxBlocks, config.publishPeriod);
     blockchainReader->addMiddleware(middleware);
 
-    std::thread blockchainReaderThread(runBlockchainReader);
+    std::thread readerThread(runReader);
     std::thread indexerThread(runIndexer);
-    blockchainReaderThread.join();
+    readerThread.join();
 
 	return 0;
 }

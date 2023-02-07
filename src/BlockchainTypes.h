@@ -7,6 +7,79 @@
 namespace BlockchainIndexer
 {
 
+struct TransactionInput
+{
+    TransactionInput()
+        : txIdx(-1)
+        , coinbase(false)
+        , sequence(0u)
+        , txOutputIdx(-1)
+        , txOutputId("")
+        , scriptSigAsm("")
+        , scriptSigHex("")
+    {
+    }
+
+    int txIdx;
+    bool coinbase;
+    uint64_t sequence;
+
+    // UTXO that is being spent
+    int txOutputIdx;
+    std::string txOutputId;
+
+    // scriptSig
+    std::string scriptSigAsm;
+    std::string scriptSigHex;
+};
+
+struct TransactionOutput
+{
+    TransactionOutput()
+        : value(-1)
+        , txOutputIdx(-1)
+        , txOutputId("")
+        , scriptPubKeyReqSig(-1)
+        , scriptPubKeyAsm("")
+        , scriptPubKeyHex("")
+        , scriptPubKeyType("")
+        , scriptPubKeyAddresses()
+    {
+    }
+
+    double value;
+    int txOutputIdx;
+    std::string txOutputId;
+
+    // scriptPubKey
+    int scriptPubKeyReqSig;
+    std::string scriptPubKeyAsm;
+    std::string scriptPubKeyHex;
+    std::string scriptPubKeyType;
+    std::string scriptPubKeyAddresses;
+};
+
+struct Transaction
+{
+    Transaction()
+        : version(-1)
+        , lockTime(-1)
+        , id("")
+        , hash("")
+        , inputs()
+        , outputs()        
+    {
+    }
+
+    int idx;
+    int version;
+    int lockTime;
+    std::string id;
+    std::string hash;
+    std::vector<TransactionInput> inputs;
+    std::vector<TransactionOutput> outputs;
+};
+
 struct Block
 {
     Block()
@@ -19,6 +92,7 @@ struct Block
         , height(0)
         , confirmations(0)
         , timestamp(0u)
+        , transactions()
     {
     }
     
@@ -31,21 +105,7 @@ struct Block
     int height;
     int confirmations;
     uint64_t timestamp;
-};
-
-struct TransactionInput
-{
-
-};
-
-struct TransactionOutput
-{
-
-};
-
-struct Transactions
-{
-
+    std::vector<Transaction> transactions;
 };
 
 }

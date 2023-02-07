@@ -27,6 +27,7 @@ public:
 
     void init(std::string& aFilename, int aMaxBlocks, int aThreadPeriod);
     void addMiddleware(std::shared_ptr<Middleware>& aMiddleware);
+    void convertJsonToBlock(json& aJsonBlock, Block& aBlock);
     void publish();
     void logic();
 
