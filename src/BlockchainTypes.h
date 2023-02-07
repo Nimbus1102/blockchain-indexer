@@ -43,7 +43,7 @@ struct TransactionOutput
         , scriptPubKeyAsm("")
         , scriptPubKeyHex("")
         , scriptPubKeyType("")
-        , scriptPubKeyAddresses()
+        , scriptPubKeyAddress()
     {
     }
 
@@ -56,7 +56,7 @@ struct TransactionOutput
     std::string scriptPubKeyAsm;
     std::string scriptPubKeyHex;
     std::string scriptPubKeyType;
-    std::string scriptPubKeyAddresses;
+    std::string scriptPubKeyAddress;
 };
 
 struct Transaction

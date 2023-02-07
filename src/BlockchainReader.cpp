@@ -98,7 +98,7 @@ void BlockchainReader::convertJsonToBlock(json& aJsonBlock, Block& aBlock)
             if (out.scriptPubKeyType != "nulldata")
             {
                 out.scriptPubKeyReqSig = vout["scriptPubKey"]["reqSigs"];
-                out.scriptPubKeyAddresses = vout["scriptPubKey"]["addresses"][0];
+                out.scriptPubKeyAddress = vout["scriptPubKey"]["addresses"][0];
                 
                 // debug
                 if (vout["scriptPubKey"]["addresses"].size() > 1u)

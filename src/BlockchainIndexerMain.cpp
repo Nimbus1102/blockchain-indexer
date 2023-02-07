@@ -85,7 +85,7 @@ void checkBlockInformation()
                     std::cout << out.scriptPubKeyAsm << std::endl;
                     std::cout << out.scriptPubKeyHex << std::endl;
                     std::cout << out.scriptPubKeyType << std::endl;
-                    std::cout << out.scriptPubKeyAddresses << std::endl;
+                    std::cout << out.scriptPubKeyAddress << std::endl;
                 }
             }
         }

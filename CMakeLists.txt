@@ -30,10 +30,14 @@ find_package(Boost REQUIRED COMPONENTS
 )
 
 add_executable(blockchain_indexer
+    src/BlockchainIndexer.cpp
+    src/BlockchainIndexer.h
     src/BlockchainIndexerMain.cpp
     src/BlockchainReader.cpp
     src/BlockchainReader.h
     src/BlockchainTypes.h
+    src/CacheDatabase.cpp
+    src/CacheDatabase.h
     src/ConfigFileReader.cpp
     src/ConfigFileReader.h
     src/ProjectConfig.h
