@@ -21,10 +21,18 @@ endIf()
 
 include(CMakeDependentOption)
 
+find_package(Boost REQUIRED COMPONENTS
+    filesystem
+    thread
+    serialization
+)
+
 add_executable(blockchain_indexer
     src/BlockchainReader.cpp
     src/BlockchainReader.h
     src/BlockchainTypes.h
+    src/ConfigFileReader.cpp
+    src/ConfigFileReader.h
     src/SimpleMiddleware.cpp
     src/SimpleMiddleware.h
     src/BlockchainIndexerMain.cpp
