@@ -21,6 +21,8 @@ endIf()
 
 include(CMakeDependentOption)
 
+find_package(Threads REQUIRED)
+find_package(nlohmann_json REQUIRED)
 find_package(Boost REQUIRED COMPONENTS
     filesystem
     thread
@@ -28,16 +30,19 @@ find_package(Boost REQUIRED COMPONENTS
 )
 
 add_executable(blockchain_indexer
+    src/BlockchainIndexerMain.cpp
     src/BlockchainReader.cpp
     src/BlockchainReader.h
     src/BlockchainTypes.h
     src/ConfigFileReader.cpp
     src/ConfigFileReader.h
+    src/ProjectConfig.h
     src/SimpleMiddleware.cpp
     src/SimpleMiddleware.h
-    src/BlockchainIndexerMain.cpp
 )
 
 target_link_libraries(blockchain_indexer
+    Threads::Threads
+    nlohmann_json::nlohmann_json
     /usr/lib/x86_64-linux-gnu/libleveldb.a
 )

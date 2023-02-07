@@ -8,6 +8,7 @@ namespace BlockchainIndexer
 
 struct ProjectConfig
 {
+    int maxBlocks;
     int publishPeriod;  // in seconds
     std::string blockchainFile;
 };

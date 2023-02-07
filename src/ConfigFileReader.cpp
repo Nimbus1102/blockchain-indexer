@@ -149,6 +149,7 @@ bool ConfigFileReader::getParameter(const std::string aPropertyKey, bool& aPrope
 bool ConfigFileReader::getConfiguration(ProjectConfig& aConfig)
 {
     bool isSuccessful = true;
+    isSuccessful = getParameter("maxBlocks", aConfig.maxBlocks) && isSuccessful;
     isSuccessful = getParameter("publishPeriod", aConfig.publishPeriod) && isSuccessful;
     isSuccessful = getParameter("blockchainFile", aConfig.blockchainFile) && isSuccessful;
 

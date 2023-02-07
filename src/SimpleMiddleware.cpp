@@ -6,6 +6,7 @@ namespace BlockchainIndexer
 BlockListener::BlockListener()
     : newMessage(false)
     , blocks()
+    , blocksMutex()
 {
 }
 
@@ -16,19 +17,33 @@ BlockListener::~BlockListener()
 
 void BlockListener::notify(Block& aBlock)
 {
-    blocks.push_back(aBlock);
+    {
+        std::lock_guard<std::mutex> tLock(blocksMutex);
+        blocks.push_back(aBlock);
+    }
+
     newMessage.store(true);
 }
 
 void BlockListener::getMessage(Block& aBlock)
 {
+    std::lock_guard<std::mutex> tLock(blocksMutex);
     aBlock = blocks.front();
     blocks.pop_front();
+
+    if (blocks.size() == 0u)
+    {
+        newMessage.store(false);
+    }
 }
 
-Middleware::Middleware(Topics aTopic)
-    : topic(aTopic)
-    , subscribers()
+bool BlockListener::haveNewMessage()
+{
+    return newMessage.load();
+}
+
+Middleware::Middleware()
+    : subscribers()
 {
 }
 

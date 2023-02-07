@@ -3,6 +3,7 @@
 
 // simple middleware class to help in publishing and subscribing to events / messages.
 
+#include <mutex>
 #include <deque>
 #include <atomic>
 #include <vector>
@@ -13,13 +14,6 @@
 namespace BlockchainIndexer
 {
 
-// add message topics here
-enum class Topics
-{
-    NOT_APPLICABLE = 0,
-    BLOCKS = 1,
-};
-
 class BlockListener
 {
 public:
@@ -28,23 +22,24 @@ public:
     
     void notify(Block& aBlock);
     void getMessage(Block& aBlock);
+    bool haveNewMessage();
 
 private:
     std::atomic<bool> newMessage;
     std::deque<Block> blocks;
+    mutable std::mutex blocksMutex;
 };
 
 class Middleware
 {
 public:
-    Middleware(Topics aTopic);
+    Middleware();
     ~Middleware();
 
     void publish(Block& aBlock);
     void addSubscriber(std::shared_ptr<BlockListener>& aListener);
 
 private:
-    Topics topic;
     std::vector<std::shared_ptr<BlockListener>> subscribers;
 };
 

@@ -33,6 +33,21 @@ struct Block
     uint64_t timestamp;
 };
 
+struct TransactionInput
+{
+
+};
+
+struct TransactionOutput
+{
+
+};
+
+struct Transactions
+{
+
+};
+
 }
 
 #endif  // BLOCKCHAIN_TYPES_H

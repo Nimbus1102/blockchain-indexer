@@ -1,6 +1,8 @@
 #ifndef CONFIG_FILE_READER_H
 #define CONFIG_FILE_READER_H
 
+// config parameter file reader that reads parameters for the blockchain indexer application.
+
 #include <string>
 #include <iostream>
 #include <boost/property_tree/xml_parser.hpp>

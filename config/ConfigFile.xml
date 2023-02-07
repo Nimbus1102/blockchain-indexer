@@ -1,4 +1,5 @@
 <BlockchainIndexer>
+    <maxBlocks>201</maxBlocks>
     <publishPeriod>10</publishPeriod>
     <blockchainFile>/home/niven/blockchain-indexer/blocks/200.json</blockchainFile>
 </BlockchainIndexer>
