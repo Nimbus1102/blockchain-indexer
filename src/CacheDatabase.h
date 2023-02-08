@@ -24,8 +24,8 @@ public:
     void cacheAddressTransaction(Transaction& aTransaction);
 
     // block index
+    bool getBlock(std::string aHash, Block& aBlock);
     bool getBlockWithHeight(int aHeight, Block& aBlock);
-    bool getBlockWithHash(std::string aHash, Block& aBlock);
 
     // block transaction index
     bool getBlockTransactions(int aHeight, std::vector<Transaction>& aTransactions);
@@ -36,12 +36,13 @@ public:
 
 private:
     mutable std::mutex blockMutex;
-    mutable std::mutex blockHashMutex;
+    mutable std::mutex blockHeightMutex;
     mutable std::mutex transactionMutex;
     mutable std::mutex addressTransactionsMutex;
 
-    std::unordered_map<int, Block> blockCache;
-    std::unordered_map<std::string, Block> blockHashCache;
+    int highestHeight;
+    std::unordered_map<std::string, Block> blockCache;
+    std::unordered_map<int, std::string> blockHeightCache;
     std::unordered_map<std::string, Transaction> transactionCache;
     std::unordered_map<std::string, std::vector<TransactionOutput>> addressTransactionsCache;
 };

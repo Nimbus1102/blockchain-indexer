@@ -6,8 +6,8 @@ namespace BlockchainIndexer
 CacheDatabase::CacheDatabase()
     : blockCache()
     , blockMutex()
-    , blockHashCache()
-    , blockHashMutex()
+    , blockHeightCache()
+    , blockHeightMutex()
     , transactionCache()
     , transactionMutex()
     , addressTransactionsCache()
@@ -22,15 +22,16 @@ CacheDatabase::~CacheDatabase()
 void CacheDatabase::cacheBlock(Block& aBlock)
 {
     {
-        // cache block with block height as key
+        // cache block with block hash as key
         std::lock_guard<std::mutex> tLock(blockMutex);
-        blockCache[aBlock.height] = aBlock;
+        blockCache[aBlock.blockHash] = aBlock;
     }
 
     {
-        // cache block with block hash as key
-        std::lock_guard<std::mutex> tLock(blockHashMutex);
-        blockHashCache[aBlock.blockHash] = aBlock;
+        // cache block hash with block height as key
+        std::lock_guard<std::mutex> tLock(blockHeightMutex);
+        highestHeight = std::max(highestHeight, aBlock.height); 
+        blockHeightCache[aBlock.height] = aBlock.blockHash;
     }
 
     {
@@ -103,28 +104,27 @@ void CacheDatabase::cacheAddressTransaction(Transaction& aTransaction)
     }
 }
 
-bool CacheDatabase::getBlockWithHeight(int aHeight, Block& aBlock)
+bool CacheDatabase::getBlock(std::string aHash, Block& aBlock)
 {
     std::lock_guard<std::mutex> tLock(blockMutex);
-    if (blockCache.find(aHeight) == blockCache.end())
+    if (blockCache.find(aHash) == blockCache.end())
     {
         return false;
     }
 
-    aBlock = blockCache[aHeight];
+    aBlock = blockCache[aHash];
     return true;
 }
 
-bool CacheDatabase::getBlockWithHash(std::string aHash, Block& aBlock)
+bool CacheDatabase::getBlockWithHeight(int aHeight, Block& aBlock)
 {
-    std::lock_guard<std::mutex> tLock(blockHashMutex);
-    if (blockHashCache.find(aHash) == blockHashCache.end())
+    std::lock_guard<std::mutex> tLock(blockHeightMutex);
+    if (blockHeightCache.find(aHeight) == blockHeightCache.end())
     {
         return false;
     }
 
-    aBlock = blockHashCache[aHash];
-    return true;
+    return getBlock(blockHeightCache[aHeight], aBlock);
 }
 
 bool CacheDatabase::getBlockTransactions(int aHeight, std::vector<Transaction>& aTransactions)
@@ -142,7 +142,7 @@ bool CacheDatabase::getBlockTransactions(int aHeight, std::vector<Transaction>& 
 bool CacheDatabase::getBlockTransactions(std::string aHash, std::vector<Transaction>& aTransactions)
 {
     Block tmp;
-    if (getBlockWithHash(aHash, tmp))
+    if (getBlock(aHash, tmp))
     {
         aTransactions = tmp.transactions;
         return true;

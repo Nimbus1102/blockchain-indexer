@@ -10,7 +10,9 @@ struct ProjectConfig
 {
     int maxBlocks;
     int publishPeriod;  // in seconds
+    int xConfirmations;
     std::string blockchainFile;
+    std::string databaseDirectory;
 };
 
 }

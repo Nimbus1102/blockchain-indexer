@@ -151,7 +151,9 @@ bool ConfigFileReader::getConfiguration(ProjectConfig& aConfig)
     bool isSuccessful = true;
     isSuccessful = getParameter("maxBlocks", aConfig.maxBlocks) && isSuccessful;
     isSuccessful = getParameter("publishPeriod", aConfig.publishPeriod) && isSuccessful;
+    isSuccessful = getParameter("xConfirmations", aConfig.xConfirmations) && isSuccessful;
     isSuccessful = getParameter("blockchainFile", aConfig.blockchainFile) && isSuccessful;
+    isSuccessful = getParameter("databaseDirectory", aConfig.databaseDirectory) && isSuccessful;
 
     return isSuccessful;
 }

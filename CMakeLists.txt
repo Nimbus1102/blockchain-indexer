@@ -22,6 +22,7 @@ endIf()
 include(CMakeDependentOption)
 
 find_package(Threads REQUIRED)
+find_package(leveldb REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(Boost REQUIRED COMPONENTS
     filesystem
@@ -47,6 +48,6 @@ add_executable(blockchain_indexer
 
 target_link_libraries(blockchain_indexer
     Threads::Threads
+    leveldb::leveldb
     nlohmann_json::nlohmann_json
-    /usr/lib/x86_64-linux-gnu/libleveldb.a
 )
