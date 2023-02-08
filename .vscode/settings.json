@@ -68,6 +68,9 @@
         "shared_mutex": "cpp",
         "thread": "cpp",
         "cfenv": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "*.ipp": "cpp",
+        "strstream": "cpp",
+        "future": "cpp"
     }
 }

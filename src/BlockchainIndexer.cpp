@@ -170,7 +170,7 @@ bool BlockchainIndexer::getTransactionValue(std::string aTransactionId, int aIdx
             }
         }
 
-        aValue = std::stoi(val);
+        aValue = std::stod(val);
         return true;
     }
     else

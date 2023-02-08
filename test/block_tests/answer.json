@@ -1,0 +1,62 @@
+{
+    "1":
+    {
+        "answer": true,
+        "block-info": "prevhash-ad3ec6ae6dd9d8c8634ad3bbb0df6678201aa37206648f41db3e2953ecb118ae-nexthash-19ca062a7e878155e83e926e135ec9b5f26ad634a9b445e2325e3b69dc11517d-merkleroot-dc9446517e11422aef7dccaf8104ef4ad227507123338f8917400beb75c824c4-size-396-weight-1476-height-13-confirmations-190-transactionnum-1-ts-1635739362"
+    },
+    "2":
+    {
+        "answer": true,
+        "block-info": "prevhash-df5c66b293222f55ef3dc5a543dcf9892d6175979fd5227ce922c144ef8d2a1f-nexthash-ce3a2bc23c92426b514b74e8b380235d5a43831aa8cfb0d81a8b0221d9799870-merkleroot-6a374e70d79f1205691a52c74075357aa2c87d1bfb82328d68147e7c8a6a59dd-size-397-weight-1480-height-55-confirmations-148-transactionnum-1-ts-1635739390"
+    },
+    "3":
+    {
+        "answer": true,
+        "block-info": "prevhash-01279429174ec430d6830165fb78cd9464deeeb386ba593b51f8e252665e9591-nexthash-b8d0a164c26b1110b02e2180aad3c15d9b31b18d43e3b1ce2258d5da41f713de-merkleroot-11a6f1f34c54418efe187fc9d1e33d8e993a05d76810829b8086cfecec40d6d0-size-397-weight-1480-height-70-confirmations-133-transactionnum-1-ts-1635739400"
+    },
+    "4":
+    {
+        "answer": true,
+        "block-info": "prevhash-f4460d2910e0343f7eb99f63b3532a22abb84f076524739e88a65abafe8a33e8-nexthash-c06cd2e67a6c8dacf120ec01cc2349a9bee057e97b90c0cf1f2503023d9f7487-merkleroot-ae9638b30ebe7dda1163de51f9462330f7e3e64a58f26d6aaa854079042eed2e-size-397-weight-1480-height-89-confirmations-114-transactionnum-1-ts-1635739414"
+    },
+    "5":
+    {
+        "answer": true,
+        "block-info": "prevhash-9769d2f618fc2a9e1e89a7e033a4088ec7bac6893a55021f1f7057262642d82a-nexthash-4f24261625da4c11d48ba9b97c30f78cba1486490ce7920657234da43fb2a941-merkleroot-ad10b7057652d875a6372ab83ad86eb82f1c0950103e5a5cec09403e25ba899c-size-397-weight-1480-height-95-confirmations-108-transactionnum-1-ts-1635739418"
+    },
+    "6":
+    {
+        "answer": true,
+        "block-info": "prevhash-62bdf2212d3b34088d94b5c83e6ac0214e981e1a230ab53b1c6c5cd33b625601-nexthash-5d03bfe9cf2b18029315a3ac84e27897ed818dc7d702179f6eb1a270a9cb8bfc-merkleroot-c0945dafef2a3f8b80531c97518dec2803c300be6c2a3fa5917db80fb6965e8f-size-397-weight-1480-height-100-confirmations-103-transactionnum-1-ts-1635739420"
+    },
+    "7":
+    {
+        "answer": true,
+        "block-info": "prevhash-5d03bfe9cf2b18029315a3ac84e27897ed818dc7d702179f6eb1a270a9cb8bfc-nexthash-0482db4ad9a4032e8c49cba16360ceaff6492efe1e3c9adbd5f6a5758fbef1a8-merkleroot-7b9bc12cb2d397306ef62514c6863a7c48e655ca57f86be89e3c28b187ed431b-size-2668-weight-10564-height-102-confirmations-101-transactionnum-4-ts-1635739422"
+    },
+    "8":
+    {
+        "answer": true,
+        "block-info": "prevhash-6583bae0adffe92e36efa7f102cf8add8bac35e741b3dcde914d485b4edb8b1d-nexthash-929ff6ab570e183cc368568b108a34a3c7b1811cba71bf555871adcffe0b34f5-merkleroot-1f00cc6a5c90d61810cc115acb58181d6645ad5b0fa59937340817dca8e72bb9-size-685-weight-2632-height-123-confirmations-80-transactionnum-2-ts-1635739436"
+    },
+    "9":
+    {
+        "answer": true,
+        "block-info": "prevhash-a7672cfe83fa308b7b36461fdc96e1ee034d2e4e233dc461d3055b262f08a71c-nexthash-b1f32a55d802de3f861f0c6f58651200c02b4765994c43c18b33106d118f4b6b-merkleroot-8f88799bb9e7274f2e8752d705ad681d675b26624eb5647c8f507cfe72fa6a3d-size-679-weight-2608-height-137-confirmations-66-transactionnum-2-ts-1635739446"
+    },
+    "10":
+    {
+        "answer": true,
+        "block-info": "prevhash-a956e9bb1feb93499ac02a268f51ed7141a0fb5035b20eec3fd440477224607c-nexthash-2cc1bb07303a68587da4fa33e9ec09885b26899d58ec498a264242ca032565a3-merkleroot-3816d153d3f95d6c6b3a504b0afd64322b00ccc0e2a91ce336a0083d1818bb85-size-2714-weight-10421-height-148-confirmations-55-transactionnum-8-ts-1635739452"
+    },
+    "11":
+    {
+        "answer": false,
+        "block-info": ""
+    },
+    "12":
+    {
+        "answer": false,
+        "block-info": ""
+    }
+}

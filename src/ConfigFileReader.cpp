@@ -158,9 +158,11 @@ bool ConfigFileReader::getConfiguration(ProjectConfig& aConfig)
     isSuccessful = getParameter("databaseDirectory", aConfig.databaseDirectory) && isSuccessful;
 
     // test parameters
-    isSuccessful = getParameter("runTestCases", aConfig.runTestCases) && isSuccessful;
-    isSuccessful = getParameter("testCaseNumber", aConfig.testCaseNumber) && isSuccessful;
-
+    isSuccessful = getParameter("runTest", aConfig.runTest) && isSuccessful;
+    isSuccessful = getParameter("numBlockTestCases", aConfig.numBlockTestCases) && isSuccessful;
+    isSuccessful = getParameter("numAddressTestCases", aConfig.numAddressTestCases) && isSuccessful;
+    isSuccessful = getParameter("blockTestDirectory", aConfig.blockTestDirectory) && isSuccessful;
+    isSuccessful = getParameter("addressTestDirectory", aConfig.addressTestDirectory) && isSuccessful;
 
     return isSuccessful;
 }

@@ -73,7 +73,6 @@ void CacheDatabase::cacheAddressTransaction(Transaction& aTransaction)
                 if (txo.txOutputId == tx.txOutputId && txo.txOutputIdx == tx.txOutputIdx)
                 {
                     addressTransactionsCache[address].erase(addressTransactionsCache[address].begin() + i);
-                    std::cout << "Caching spent transaction successful" << std::endl;
                     break;
                 }
             }
@@ -90,7 +89,6 @@ void CacheDatabase::cacheAddressTransaction(Transaction& aTransaction)
             }
 
             addressTransactionsCache[tx.scriptPubKeyAddress].push_back(tx);            
-            std::cout << "Caching unspend transaction successful" << std::endl;
         }
     }
 }

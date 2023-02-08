@@ -12,6 +12,7 @@
 #include <nlohmann/json.hpp>
 
 #include "BlockchainTypes.h"
+#include "BlockchainUtils.h"
 #include "SimpleMiddleware.h"
 
 using json = nlohmann::json;
@@ -27,7 +28,6 @@ public:
 
     void init(std::string& aFilename, int aMaxBlocks, int aThreadPeriod);
     void addMiddleware(std::shared_ptr<Middleware>& aMiddleware);
-    void convertJsonToBlock(json& aJsonBlock, Block& aBlock);
     void publish();
     void logic();
 

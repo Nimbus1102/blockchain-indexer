@@ -37,6 +37,8 @@ add_executable(blockchain_indexer
     src/BlockchainReader.cpp
     src/BlockchainReader.h
     src/BlockchainTypes.h
+    src/BlockchainUtils.cpp
+    src/BlockchainUtils.h
     src/CacheDatabase.cpp
     src/CacheDatabase.h
     src/ConfigFileReader.cpp
@@ -44,6 +46,8 @@ add_executable(blockchain_indexer
     src/ProjectConfig.h
     src/SimpleMiddleware.cpp
     src/SimpleMiddleware.h
+    src/TestIndexer.cpp
+    src/TestIndexer.h
 )
 
 target_link_libraries(blockchain_indexer

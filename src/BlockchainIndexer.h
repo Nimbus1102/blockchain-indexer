@@ -15,8 +15,7 @@
 // When storing in disk, the blockchain indexer will store key-value pairs of the block attributes.
 // The attributes are:
 // 1. block-height : block-hash
-// 2. block-hash : block-prevHash-nextHash-merkleRoot-size-weight-height-confirmations-timestamp
-// 3. block-hash : block-transaction-ids
+// 2. block-hash : block-info (block-prevHash-nextHash-merkleRoot-size-weight-height-confirmations-timestamp)
 // 
 // The indexer will also store transactions and address transactions in disk.
 // 1. unspent-transaction-id-idx : value

@@ -7,9 +7,11 @@
 #include <array>
 #include <string>
 #include <vector>
+#include <atomic>
 #include <memory>
 #include <algorithm>
 
+#include "TestIndexer.h"
 #include "ProjectConfig.h"
 #include "CacheDatabase.h"
 #include "BlockchainReader.h"
@@ -17,6 +19,7 @@
 #include "SimpleMiddleware.h"
 #include "BlockchainIndexer.h"
 
+std::atomic<bool> reachedEnd;
 BlockchainIndexer::ProjectConfig config;
 std::shared_ptr<BlockchainIndexer::CacheDatabase> cacheDatabase;
 std::shared_ptr<BlockchainIndexer::BlockListener> indexSubscriber;
@@ -24,18 +27,49 @@ std::shared_ptr<BlockchainIndexer::BlockchainReader> blockchainReader;
 std::shared_ptr<BlockchainIndexer::BlockchainIndexer> blockchainIndexer;
 std::string configFilePath = "/home/niven/blockchain-indexer/config/ConfigFile.xml";
 
+// callback function to be used to get block from block hash
+bool getBlock(std::string hash, BlockchainIndexer::Block& block)
+{
+    return cacheDatabase->getBlock(hash, block);
+}
+
+// callback function to be used to get block from block height
+bool getBlockWithHeight(int height, BlockchainIndexer::Block& block)
+{
+    return cacheDatabase->getBlockWithHeight(height, block);
+}
+
+// callback function to be used to get transactions in block from block height
+bool getTransactionsWithHeight(int height, std::vector<BlockchainIndexer::Transaction>& transactions)
+{
+    return cacheDatabase->getBlockTransactions(height, transactions);
+}
+
+// callback function to be used to get transactions in block from block hash
+bool getTransactionsWithHash(std::string hash, std::vector<BlockchainIndexer::Transaction>& transactions)
+{
+    return cacheDatabase->getBlockTransactions(hash, transactions);
+}
+
+// callback function to be used to get all unspent transactions in an address
+bool getAddressTransactions(std::string address, std::vector<BlockchainIndexer::TransactionOutput>& transactions)
+{
+    return cacheDatabase->getAddressTransactions(address, transactions);
+}
+
 void runReader()
 {
     std::cout << "Starting blockchain reader." << std::endl;
     blockchainReader->logic();
-    std::cout << "End of blockchain. Closing reader thread." << std::endl;
+    reachedEnd.store(true);
+    std::cout << "Reached end of blockchain. Closing reader thread." << std::endl;
 }
 
 void runIndexer()
 {
     std::cout << "Starting indexing logic thread." << std::endl;
     
-    while (true)
+    while (!reachedEnd.load())
     {
         if (indexSubscriber->haveNewMessage())
         {
@@ -53,62 +87,12 @@ void runIndexer()
             }
             else
             {
-                std::cout << "Block confirmation below x-confirmation, not processing received block." << std::endl;
+                std::cout << "Block confirmation below x-confirmation number, discarding." << std::endl;
             }
         }
     }
 
-    std::cout << "Closing indexer logic thread." << std::endl;
-}
-
-void checkBlockInformation(BlockchainIndexer::Block& block)
-{
-    std::cout << block.blockHash << std::endl;
-    std::cout << block.prevBlockHash << std::endl;
-    std::cout << block.nextBlockHash << std::endl;
-    std::cout << block.merkleRoot << std::endl;
-    std::cout << block.size << std::endl;
-    std::cout << block.weight << std::endl;
-    std::cout << block.height << std::endl;
-    std::cout << block.confirmations << std::endl;
-    std::cout << block.timestamp << std::endl;
-
-    for (auto& transaction : block.transactions)
-    {
-        std::cout << "Transaction:" << std::endl;
-        std::cout << transaction.idx << std::endl;
-        std::cout << transaction.version << std::endl;
-        std::cout << transaction.lockTime << std::endl;
-        std::cout << transaction.id << std::endl;
-        std::cout << transaction.hash << std::endl;
-
-        std::cout << "Inputs:" << std::endl;
-        for (auto& in : transaction.inputs)
-        {
-            std::cout << "Input:" << std::endl;
-            std::cout << in.txIdx << std::endl;
-            std::cout << in.coinbase  << std::endl;
-            std::cout << in.sequence  << std::endl;
-            std::cout << in.txOutputIdx  << std::endl;
-            std::cout << in.txOutputId  << std::endl;
-            std::cout << in.scriptSigAsm  << std::endl;
-            std::cout << in.scriptSigHex  << std::endl;
-        }
-
-        std::cout << "Outputs:" << std::endl;
-        for (auto& out : transaction.outputs)
-        {
-            std::cout << "Output:" << std::endl;
-            std::cout << out.value << std::endl;
-            std::cout << out.txOutputIdx << std::endl;
-            std::cout << out.txOutputId << std::endl;
-            std::cout << out.scriptPubKeyReqSig << std::endl;
-            std::cout << out.scriptPubKeyAsm << std::endl;
-            std::cout << out.scriptPubKeyHex << std::endl;
-            std::cout << out.scriptPubKeyType << std::endl;
-            std::cout << out.scriptPubKeyAddress << std::endl;
-        }
-    }
+    std::cout << "Finished loading blockchain indexer, closing indexer logic thread." << std::endl;
 }
 
 int main(const int argc, const char** const argv)
@@ -117,6 +101,7 @@ int main(const int argc, const char** const argv)
     BlockchainIndexer::ConfigFileReader configReader;
     configReader.init(configFilePath);
     configReader.getConfiguration(config);
+    reachedEnd.store(false);
 
     // initialize middleware and subscriber
     indexSubscriber = std::make_shared<BlockchainIndexer::BlockListener>();
@@ -139,14 +124,24 @@ int main(const int argc, const char** const argv)
     std::thread readerThread(runReader);
     std::thread indexerThread(runIndexer);
     readerThread.join();
+    indexerThread.join();
 
-    if (config.runTestCases)
+    if (config.runTest)
     {
         // run test cases
+        std::cout << "Running test cases." << std::endl;
+        BlockchainIndexer::TestIndexer tester(config.numBlockTestCases, config.numAddressTestCases, config.blockTestDirectory, config.addressTestDirectory);
+        tester.init(cacheDatabase, blockchainIndexer);
+        if (tester.runBlockTests())
+        {
+            std::cout << "Passed block test cases." << std::endl;
+        }
+        else
+        {
+            std::cout << "Failed block test cases." << std::endl;
 
+        }
     }
-
-    indexerThread.join();
 
 	return 0;
 }
