@@ -149,11 +149,18 @@ bool ConfigFileReader::getParameter(const std::string aPropertyKey, bool& aPrope
 bool ConfigFileReader::getConfiguration(ProjectConfig& aConfig)
 {
     bool isSuccessful = true;
+
+    // application parameters
     isSuccessful = getParameter("maxBlocks", aConfig.maxBlocks) && isSuccessful;
     isSuccessful = getParameter("publishPeriod", aConfig.publishPeriod) && isSuccessful;
     isSuccessful = getParameter("xConfirmations", aConfig.xConfirmations) && isSuccessful;
     isSuccessful = getParameter("blockchainFile", aConfig.blockchainFile) && isSuccessful;
     isSuccessful = getParameter("databaseDirectory", aConfig.databaseDirectory) && isSuccessful;
+
+    // test parameters
+    isSuccessful = getParameter("runTestCases", aConfig.runTestCases) && isSuccessful;
+    isSuccessful = getParameter("testCaseNumber", aConfig.testCaseNumber) && isSuccessful;
+
 
     return isSuccessful;
 }

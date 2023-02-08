@@ -23,15 +23,20 @@ public:
     void cacheBlock(Block& aBlock);
     void cacheAddressTransaction(Transaction& aTransaction);
 
-    // block index
+    // method for endpoint to get block from block hash
     bool getBlock(std::string aHash, Block& aBlock);
-    bool getBlockWithHeight(int aHeight, Block& aBlock);
 
-    // block transaction index
+    // method for endpoint to get block from block height
+    bool getBlockWithMaxHeight(Block& aBlock);
+    bool getBlockWithHeight(int aHeight, Block& aBlock);
+    
+    // method for endpoint to get transactions in block from block height
     bool getBlockTransactions(int aHeight, std::vector<Transaction>& aTransactions);
+
+    // method for endpoint to get transactions in block from block hash
     bool getBlockTransactions(std::string aHash, std::vector<Transaction>& aTransactions);
 
-    // address index
+    // method for endpoint to get all unspent transactions from address 
     bool getAddressTransactions(std::string aAddress, std::vector<TransactionOutput>& aTransactions);
 
 private:

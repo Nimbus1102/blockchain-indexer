@@ -1,7 +1,14 @@
 <BlockchainIndexer>
+
+    <!-- application parameters -->
     <maxBlocks>201</maxBlocks>
-    <publishPeriod>1</publishPeriod>
+    <publishPeriod>100</publishPeriod>    <!-- in milliseconds -->
     <xConfirmations>6</xConfirmations>  <!-- 6-confirmation used because attackers are unlikely to amass more than 10% of total compute -->
     <blockchainFile>/home/niven/blockchain-indexer/blocks/200.json</blockchainFile>
     <databaseDirectory>/home/niven/blockchain-indexer/db</databaseDirectory>
+
+    <!-- test parameters -->
+    <runTestCases>true</runTestCases>
+    <testCaseNumber>1</testCaseNumber>
+
 </BlockchainIndexer>

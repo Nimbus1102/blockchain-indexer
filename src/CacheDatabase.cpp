@@ -4,7 +4,8 @@ namespace BlockchainIndexer
 {
 
 CacheDatabase::CacheDatabase()
-    : blockCache()
+    : highestHeight(0)
+    , blockCache()
     , blockMutex()
     , blockHeightCache()
     , blockHeightMutex()
@@ -47,43 +48,34 @@ void CacheDatabase::cacheBlock(Block& aBlock)
 
 void CacheDatabase::cacheAddressTransaction(Transaction& aTransaction)
 {
+    std::lock_guard<std::mutex> tLock(addressTransactionsMutex);
+
     for (auto& tx : aTransaction.inputs)
     {
-        
-        std::string address = "";
-
+        if (tx.coinbase)
         {
-            // get address of spent transaction input
-            std::lock_guard<std::mutex> tLock(transactionMutex);
-            if (transactionCache.find(tx.txOutputId) != transactionCache.end())
-            {
-                address = transactionCache[tx.txOutputId].outputs[tx.txOutputIdx].scriptPubKeyAddress;
-            }
-            else
-            {
-                std::cout << "here" << std::endl;
-            }
+            continue;
         }
 
+        // get address of spent transaction input
+        std::string address = "";
+        if (transactionCache.find(tx.txOutputId) != transactionCache.end())
         {
-            // remove transaction from address transaction container
-            std::lock_guard<std::mutex> tLock(addressTransactionsMutex);
-            if (addressTransactionsCache.find(address) != addressTransactionsCache.end())
+            address = transactionCache[tx.txOutputId].outputs[tx.txOutputIdx].scriptPubKeyAddress;
+        }
+
+        // remove transaction from address transaction container
+        if (addressTransactionsCache.find(address) != addressTransactionsCache.end())
+        {
+            for (int i = 0; i < addressTransactionsCache[address].size(); ++i)
             {
-                for (int i = 0; i < addressTransactionsCache[address].size(); ++i)
+                auto& txo = addressTransactionsCache[address][i];
+                if (txo.txOutputId == tx.txOutputId && txo.txOutputIdx == tx.txOutputIdx)
                 {
-                    auto& txo = addressTransactionsCache[address][i];
-                    if (txo.txOutputId == tx.txOutputId && txo.txOutputIdx == tx.txOutputIdx)
-                    {
-                        addressTransactionsCache[address].erase(addressTransactionsCache[address].begin() + i);
-                        std::cout << "Caching spent transaction successful" << std::endl;
-                        break;
-                    }
+                    addressTransactionsCache[address].erase(addressTransactionsCache[address].begin() + i);
+                    std::cout << "Caching spent transaction successful" << std::endl;
+                    break;
                 }
-            }
-            else
-            {
-                std::cout << "here2" << std::endl;
             }
         }
     }
@@ -92,7 +84,6 @@ void CacheDatabase::cacheAddressTransaction(Transaction& aTransaction)
     {
         if (tx.scriptPubKeyType != "nulldata")
         {
-            std::lock_guard<std::mutex> tLock(addressTransactionsMutex);
             if (addressTransactionsCache.find(tx.scriptPubKeyAddress) == addressTransactionsCache.end())
             {
                 addressTransactionsCache[tx.scriptPubKeyAddress] = std::vector<TransactionOutput>();
@@ -114,6 +105,11 @@ bool CacheDatabase::getBlock(std::string aHash, Block& aBlock)
 
     aBlock = blockCache[aHash];
     return true;
+}
+
+bool CacheDatabase::getBlockWithMaxHeight(Block& aBlock)
+{
+    return getBlockWithHeight(highestHeight, aBlock);
 }
 
 bool CacheDatabase::getBlockWithHeight(int aHeight, Block& aBlock)

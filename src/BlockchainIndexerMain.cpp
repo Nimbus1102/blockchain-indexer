@@ -11,12 +11,14 @@
 #include <algorithm>
 
 #include "ProjectConfig.h"
+#include "CacheDatabase.h"
 #include "BlockchainReader.h"
 #include "ConfigFileReader.h"
 #include "SimpleMiddleware.h"
 #include "BlockchainIndexer.h"
 
 BlockchainIndexer::ProjectConfig config;
+std::shared_ptr<BlockchainIndexer::CacheDatabase> cacheDatabase;
 std::shared_ptr<BlockchainIndexer::BlockListener> indexSubscriber;
 std::shared_ptr<BlockchainIndexer::BlockchainReader> blockchainReader;
 std::shared_ptr<BlockchainIndexer::BlockchainIndexer> blockchainIndexer;
@@ -26,17 +28,15 @@ void runReader()
 {
     std::cout << "Starting blockchain reader." << std::endl;
     blockchainReader->logic();
-    std::cout << "End of blockchain!" << std::endl;
+    std::cout << "End of blockchain. Closing reader thread." << std::endl;
 }
 
 void runIndexer()
 {
-    std::cout << "Starting indexer logic thread." << std::endl;
+    std::cout << "Starting indexing logic thread." << std::endl;
     
-    bool noBlocksDetected = false;
     while (true)
     {
-        noBlocksDetected = false;
         if (indexSubscriber->haveNewMessage())
         {
             BlockchainIndexer::Block tmp;
@@ -44,6 +44,10 @@ void runIndexer()
 
             if (tmp.confirmations >= config.xConfirmations)
             {
+                // cache block data in memory
+                cacheDatabase->cacheBlock(tmp);
+
+                // index block data on disk
                 blockchainIndexer->indexBlock(tmp);
                 std::cout << "Processed block information." << std::endl;
             }
@@ -51,19 +55,6 @@ void runIndexer()
             {
                 std::cout << "Block confirmation below x-confirmation, not processing received block." << std::endl;
             }
-        }
-        else
-        {
-            if (noBlocksDetected)
-            {
-                break;
-            }
-            else
-            {
-                noBlocksDetected = true;
-            }
-
-            std::this_thread::sleep_for(std::chrono::seconds(1));
         }
     }
 
@@ -141,9 +132,20 @@ int main(const int argc, const char** const argv)
     blockchainIndexer = std::make_shared<BlockchainIndexer::BlockchainIndexer>();
     blockchainIndexer->init(config.databaseDirectory);
 
+    // initialize cache database in heap
+    cacheDatabase.reset(new BlockchainIndexer::CacheDatabase());
+
+    // start indexing worker thread and reader thread
     std::thread readerThread(runReader);
     std::thread indexerThread(runIndexer);
     readerThread.join();
+
+    if (config.runTestCases)
+    {
+        // run test cases
+
+    }
+
     indexerThread.join();
 
 	return 0;

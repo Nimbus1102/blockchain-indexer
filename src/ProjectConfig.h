@@ -8,11 +8,16 @@ namespace BlockchainIndexer
 
 struct ProjectConfig
 {
+    // application parameters
     int maxBlocks;
     int publishPeriod;  // in seconds
     int xConfirmations;
     std::string blockchainFile;
     std::string databaseDirectory;
+
+    // test parameters
+    bool runTestCases;
+    int testCaseNumber;
 };
 
 }

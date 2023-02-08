@@ -129,7 +129,7 @@ void BlockchainReader::logic()
     while (counter < maxBlocks)
     {
         publish();
-        std::this_thread::sleep_for(std::chrono::seconds(threadPeriod));
+        std::this_thread::sleep_for(std::chrono::milliseconds(threadPeriod));
     }
 }
 

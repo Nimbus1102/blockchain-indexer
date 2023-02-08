@@ -2,9 +2,9 @@
 #define BLOCKCHAIN_INDEXER_H
 
 // Indexer to index blocks read from the Bitcoin blockchain, including its transactions. The indexer 
-// will store the blockchain information in memory (CacheDatabase) and on disk  using a key-value 
-// datastore (LevelDB). BlockIndexer class helps the client to read and write blockchain information, 
-// handling queries from various http endpoints that the indexer application may offer.
+// will store the blockchain information on disk using a key-value datastore, using LevelDB. The
+// BlockchainIndexer class helps the client to read and write blockchain information, handling queries
+// from various http endpoints that the indexer application may offer.
 //
 // It will index the elements such that we are able to:
 // 1. Block index: indexing the block in height order, with the option to query blocks by their hash.
@@ -15,14 +15,12 @@
 // When storing in disk, the blockchain indexer will store key-value pairs of the block attributes.
 // The attributes are:
 // 1. block-height : block-hash
-// 2. block-hash : block-height
-// 3. block-hash : block-size
-// 4. block-hash : number of transactions
+// 2. block-hash : block-prevHash-nextHash-merkleRoot-size-weight-height-confirmations-timestamp
+// 3. block-hash : block-transaction-ids
 // 
 // The indexer will also store transactions and address transactions in disk.
-// 1. transaction-id : block-hash-transaction-idx
-// 2. transaction-id-idx : value
-// 2. transaction-id-idx : address
+// 1. unspent-transaction-id-idx : value
+// 2. unspent-transaction-id-idx : address
 // 3. address : spent and unspent transaction-ids
 
 #include <mutex>
@@ -38,7 +36,6 @@
 #include <leveldb/filter_policy.h>
 
 #include "BlockchainTypes.h"
-#include "CacheDatabase.h"
 
 namespace BlockchainIndexer
 {
@@ -52,21 +49,25 @@ public:
     void init(std::string aDatabaseDirectory);
     void indexBlock(Block& aBlock);
 
-    // block index
-    bool getBlockWithHeight(int aHeight, Block& aBlock);
-    bool getBlockWithHash(std::string aHash, Block& aBlock);
+    // method to get block information of the max height block
+    bool getBlockWithMaxHeight(std::string& aBlockInfo);
 
-    // block transaction index
-    bool getBlockTransactions(int aHeight, std::vector<Transaction>& aTransactions);
-    bool getBlockTransactions(std::string aHash, std::vector<Transaction>& aTransactions);
+    // method to get block information from block height
+    bool getBlockWithHeight(int aHeight, std::string& aBlockInfo);
 
-    // address index
-    bool getAddressTransactions(std::string aAddress, std::vector<TransactionOutput>& aTransactions);
+    // method to get block information from block hash
+    bool getBlockInformation(std::string& aBlockHash, std::string& aBlockInfo);
+
+    // method to get value from transaction id and idx
+    bool getTransactionValue(std::string aTransactionId, int aIdx, double& aValue);
+
+    // method to get transaction history from address
+    bool getAddressTransactions(std::string aAddress, std::string& aHistory);
 
 private:
+    int highestHeight;
     mutable std::mutex dbMutex;
     std::unique_ptr<leveldb::DB> levelDB;
-    std::unique_ptr<CacheDatabase> cacheDB;
 };
 
 }

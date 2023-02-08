@@ -4,15 +4,14 @@ namespace BlockchainIndexer
 {
 
 BlockchainIndexer::BlockchainIndexer()
-    : levelDB()
-    , cacheDB()
+    : highestHeight(0)
+    , levelDB()
 {
 }
 
 BlockchainIndexer::~BlockchainIndexer()
 {
     levelDB = nullptr;
-    cacheDB = nullptr;
 }
 
 void BlockchainIndexer::init(std::string aDatabaseDirectory)
@@ -27,45 +26,37 @@ void BlockchainIndexer::init(std::string aDatabaseDirectory)
 
     // initialize databases
     levelDB.reset(db);
-    cacheDB = std::make_unique<CacheDatabase>();
 }
 
 void BlockchainIndexer::indexBlock(Block& aBlock)
 {
-    // cache block data in memory
-    cacheDB->cacheBlock(aBlock);
-
+    // get current max height
+    highestHeight = std::max(highestHeight, aBlock.height); 
+    
     // block-height : block-hash
     std::stringstream height_ss;
     height_ss << std::setfill('0') << std::setw(8) << aBlock.height;
     levelDB->Put(leveldb::WriteOptions(), height_ss.str(), aBlock.blockHash);
 
-    // block-hash : block-height
-    std::stringstream hash_height_ss;
-    hash_height_ss << "block-" << aBlock.blockHash << "-height";
-    levelDB->Put(leveldb::WriteOptions(), hash_height_ss.str(), height_ss.str());
-
-    // block-hash : block-size
-    std::stringstream hash_size_ss;
-    hash_size_ss << "block-" << aBlock.blockHash << "-size";
-    std::stringstream block_size_ss;
-    block_size_ss << std::setfill('0') << std::setw(8) << aBlock.size;
-    levelDB->Put(leveldb::WriteOptions(), hash_height_ss.str(), block_size_ss.str());
-
-    // block-hash : number of transactions
-    std::stringstream hash_trans_ss;
-    hash_size_ss << "block-" << aBlock.blockHash << "-num-transactions";
-    std::stringstream block_trans_ss;
-    block_trans_ss << std::setfill('0') << std::setw(8) << int(aBlock.transactions.size());
-    levelDB->Put(leveldb::WriteOptions(), hash_trans_ss.str(), block_trans_ss.str());
+    // block-hash : block-prevHash-nextHash-merkleRoot-size-weight-height-confirmations-timestamp
+    std::stringstream hash_info_ss;
+    std::stringstream block_info_ss;
+    block_info_ss << 
+        "prevhash-" << aBlock.prevBlockHash << 
+        "-nexthash-" << aBlock.nextBlockHash <<
+        "-merkleroot-" << aBlock.merkleRoot << 
+        "-size-" << aBlock.size << 
+        "-weight-" << aBlock.weight <<
+        "-height-" << aBlock.height << 
+        "-confirmations-" << aBlock.confirmations << 
+        "-transactionnum-" << aBlock.transactions.size() <<
+        "-ts-" << aBlock.timestamp;
+    
+    hash_info_ss << "block-" << aBlock.blockHash << "-info";
+    levelDB->Put(leveldb::WriteOptions(), hash_info_ss.str(), block_info_ss.str());
 
     for (auto& transaction : aBlock.transactions)
     {
-        // transaction-id : block-hash-transaction-idx
-        std::stringstream transaction_idx_ss;
-        transaction_idx_ss << "block-id-" << aBlock.blockHash << "-trans-idx-" << transaction.idx;
-        levelDB->Put(leveldb::WriteOptions(), transaction.id, transaction_idx_ss.str());
-
         for (auto& output : transaction.outputs)
         {
             if (output.scriptPubKeyType == "nulldata")
@@ -73,14 +64,14 @@ void BlockchainIndexer::indexBlock(Block& aBlock)
                 continue;
             }
 
-            // transaction-id-idx : value
+            // unspent-transaction-id-idx : value
             std::stringstream transaction_output_idx_val_ss;
             transaction_output_idx_val_ss << "trans-id-" << output.txOutputId << "-idx-" << output.txOutputIdx << "-value";
             std::stringstream transaction_output_val_ss;
             transaction_output_val_ss << std::setfill('0') << std::setw(8) << output.value;
             levelDB->Put(leveldb::WriteOptions(), transaction_output_idx_val_ss.str(), transaction_output_val_ss.str());
 
-            // transaction-id-idx : address
+            // unspent-transaction-id-idx : address
             std::stringstream transaction_output_idx_address_ss;
             transaction_output_idx_address_ss << "trans-id-" << output.txOutputId << "-idx-" << output.txOutputIdx << "-address";
             levelDB->Put(leveldb::WriteOptions(), transaction_output_idx_address_ss.str(), output.scriptPubKeyAddress);
@@ -127,46 +118,71 @@ void BlockchainIndexer::indexBlock(Block& aBlock)
                     currTransactions = currTransactions + "-" + transaction_input_ss.str();
                     levelDB->Put(leveldb::WriteOptions(), address, currTransactions);
                 }
-                else
-                {
-                    std::cout << "Failed to fetch transactions from address." << std::endl;
-                }
             }
-            else
-            {
-                std::cout << "Failed to fetch addres from transaction id and idx." << std::endl;
-            }            
         }        
     }    
 }
 
-bool BlockchainIndexer::getBlockWithHeight(int aHeight, Block& aBlock)
+bool BlockchainIndexer::getBlockWithMaxHeight(std::string& aBlockInfo)
 {
-    return true;
+    return getBlockWithHeight(highestHeight, aBlockInfo);
 }
 
-bool BlockchainIndexer::getBlockWithHash(std::string aHash, Block& aBlock)
+bool BlockchainIndexer::getBlockWithHeight(int aHeight, std::string& aBlockInfo)
 {
-
-    return true;
+    std::stringstream height_ss;
+    height_ss << std::setfill('0') << std::setw(8) << aHeight;
+    std::string blockHash;
+    leveldb::Status status = levelDB->Get(leveldb::ReadOptions(), height_ss.str(), &blockHash);
+    if (status.ok())
+    {
+        return getBlockInformation(blockHash, aBlockInfo);
+    }
+    else
+    {
+        return false;
+    }
 }
 
-bool BlockchainIndexer::getBlockTransactions(int aHeight, std::vector<Transaction>& aTransactions)
+bool BlockchainIndexer::getBlockInformation(std::string& aBlockHash, std::string& aBlockInfo)
 {
-
-    return true;
+    std::stringstream hash_info_ss;
+    hash_info_ss << "block-" << aBlockHash << "-info";
+    leveldb::Status status = levelDB->Get(leveldb::ReadOptions(), hash_info_ss.str(), &aBlockInfo);
+    return status.ok();
 }
 
-bool BlockchainIndexer::getBlockTransactions(std::string ahash, std::vector<Transaction>& aTransactions)
+bool BlockchainIndexer::getTransactionValue(std::string aTransactionId, int aIdx, double& aValue)
 {
+    std::stringstream transaction_output_idx_val_ss;
+    transaction_output_idx_val_ss << "trans-id-" << aTransactionId << "-idx-" << aIdx << "-value";
+    std::string val;
+    leveldb::Status status = levelDB->Get(leveldb::ReadOptions(), transaction_output_idx_val_ss.str(), &val);
 
-    return true;
+    if (status.ok())
+    {
+        for (int i = 0; i < val.length(); i++)
+        {
+            if (val[i] != '0')
+            {
+                val = val.substr(i);
+                break;
+            }
+        }
+
+        aValue = std::stoi(val);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
-bool BlockchainIndexer::getAddressTransactions(std::string aAddress, std::vector<TransactionOutput>& aTransactions)
+bool BlockchainIndexer::getAddressTransactions(std::string aAddress, std::string& aHistory)
 {
-
-    return true;
+    leveldb::Status status = levelDB->Get(leveldb::ReadOptions(), aAddress, &aHistory);
+    return status.ok();
 }
 
 }
