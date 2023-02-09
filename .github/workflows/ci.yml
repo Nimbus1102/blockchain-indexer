@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
-    - run: docker-compose build
+    - run: docker-compose -f ./test/test.yml build
   
   Test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
-      - run: docker-compose up
+      - run: docker-compose -f ./test/test.yml up
