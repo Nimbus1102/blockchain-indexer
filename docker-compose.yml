@@ -4,4 +4,4 @@ services:
   indexer:
     build: .
     image: blockchain-indexer/indexer
-    command: bash -c "cd /blockchain-indexer/build/bin && ./blockchain_indexer"
+    command: bash -c "cd /blockchain-indexer/build/bin && ./blockchain_indexer test"

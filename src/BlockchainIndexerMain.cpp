@@ -133,7 +133,7 @@ int main(const int argc, const char** const argv)
     readerThread.join();
     indexerThread.join();
 
-    if (config.runTest)
+    if (argc > 1 && argv[1] == "test")
     {
         // run test cases
         std::cout << "Running test cases." << std::endl;

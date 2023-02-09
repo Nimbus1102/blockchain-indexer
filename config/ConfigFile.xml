@@ -8,7 +8,6 @@
     <databaseDirectory>/blockchain-indexer/db</databaseDirectory>
 
     <!-- test parameters -->
-    <runTest>true</runTest>
     <numBlockTestCases>12</numBlockTestCases>
     <numAddressTestCases>6</numAddressTestCases>
     <blockTestDirectory>/blockchain-indexer/test/block_tests/</blockTestDirectory>
