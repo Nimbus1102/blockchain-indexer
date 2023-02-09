@@ -18,31 +18,41 @@ The application provides 4 indexes: block index, block transaction index, transa
 
 Block index enables clients to query block data quickly by height and hash, and query blocks sorted by height (decreasing order).
 
-- `/api/blocks`: block[] - *(BlockchainIndexerMain.cpp::getAllBlocks)*
-- `/api/blocks?maxHeight=`: block - *(BlockchainIndexerMain.cpp::getMaxHeightBlock)*
-- `/api/blocks/{height}`: block - *(BlockchainIndexerMain.cpp::getBlockWithHeight)*
-- `/api/blocks/{hash}`: block - *(BlockchainIndexerMain.cpp::getBlock)*
+- `/api/blocks`: block[] 
+    - BlockchainIndexerMain.cpp::getAllBlocks
+- `/api/blocks?maxHeight=`: block
+    - BlockchainIndexerMain.cpp::getMaxHeightBlock
+- `/api/blocks/{height}`: block
+    - BlockchainIndexerMain.cpp::getBlockWithHeight
+- `/api/blocks/{hash}`: block 
+    - BlockchainIndexerMain.cpp::getBlock
 
 ### 2. Block Transactions Index
 
 Block transactions index provides clients the ability to query transactions quickly within a block, given its height or hash.
 
-- `/api/blocks/{hash}/transactions`: transaction[] - *(BlockchainIndexerMain.cpp::getTransactionsWithHash)*
-- `/api/blocks/{height}/transactions`: transaction[] - *(BlockchainIndexerMain.cpp::getTransactionsWithHeight)*
+- `/api/blocks/{hash}/transactions`: transaction[] 
+    - BlockchainIndexerMain.cpp::getTransactionsWithHash
+- `/api/blocks/{height}/transactions`: transaction[] 
+    - BlockchainIndexerMain.cpp::getTransactionsWithHeight
 
 ### 3. Transaction Index
 
 Transaction index provides clients the option to query all transactions from the transaction id.
 
-- `/api/transaction/{transaction_id}/transaction`: transaction - *(BlockchainIndexerMain.cpp::getTransactionWithId)*
+- `/api/transaction/{transaction_id}/transaction`: transaction
+    - BlockchainIndexerMain.cpp::getTransactionWithId
 
 ### 4. Address Transaction Index
 
 Address transaction index provides clients the option to query transactions using bitcoin addresses. The application provides 3 endpoints, where client can query for the updated UTXO, all Vin from the address, and all Vout from the address.
 
-- `/api/addresses/{address}/transactions`: transaction[] - *(BlockchainIndexerMain.cpp::getAddressTransactions)*
-- `/api/addresses/{address}/input_transactions`: transaction[] - *(BlockchainIndexerMain.cpp::getAddressInputTransactions)*
-- `/api/addresses/{address}/output_transactions`: transaction[] - *(BlockchainIndexerMain.cpp::getAddressOutputTransactions)*
+- `/api/addresses/{address}/transactions`: transaction[]
+    - BlockchainIndexerMain.cpp::getAddressTransactions
+- `/api/addresses/{address}/input_transactions`: transaction[]
+    - BlockchainIndexerMain.cpp::getAddressInputTransactions
+- `/api/addresses/{address}/output_transactions`: transaction[]
+    - BlockchainIndexerMain.cpp::getAddressOutputTransactions
 
 ## 3. System Design
 
