@@ -66,7 +66,7 @@ The application is compiled and built into a Docker image, which will be execute
 
 To ensure the application's various functionality, test cases are created and defined from the blockchain data. Tests are also splitfrom address indexing tests and block indexing tests.
 
-For the block indexing tests, there are 12 defined test cases, with edge cases in test10, test11 and test12 using anon-existent block, block 198 and block 199 respectively. We test our block indexing features by querying for the blocks in our indexing datastore, and comparing the retrieved blocks with our test cases.
+For the block indexing tests, there are 12 defined test cases, with edge cases in *test10, test11 and test12* using a non-existent block, block 198 and block 199 respectively. We test our block indexing features by querying for the blocks in our indexing datastore, and comparing the retrieved blocks with our test cases.
 
 For the address indexing tests, there are 6 defined test cases, containing transactions found on the blockchain data. I included edge cases such as non-existent transactions, spent/input transactions and unspent transactions. The tests test our address transaction index for updated transactions, input transactions and output transactions, and ensure that the event sourcing pattern used to accumulate the address transaction history is accurate.
 
