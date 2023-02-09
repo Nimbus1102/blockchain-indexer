@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
-    - run: docker-compose -f ./test/test.yml build
+    - run: docker-compose build
   
   Test:
     runs-on: ubuntu-latest
