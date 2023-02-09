@@ -1,14 +1,14 @@
 # Blockchain Bitcoin Indexer (C++)
 
-This is a blockchain index project, which is essentially an ETL (Extract, Transform and Load) model that decentralized applications use as a unique method to convert blockchain data and store it in a way that it is highly accessible for the logic of the appplication. The issue that the indexer aims to tackle is fetching transactional / information hostory that may not be highly inefficient if we were to interact directly with the blockchain.
+This is a blockchain index project, which is essentially an ETL (Extract, Transform and Load) model that decentralized applications use as a unique method to convert blockchain data and store it in a way that it is highly accessible for the logic of the appplication. The issue that the indexer aims to tackle is fetching transactional / information history that may not be highly inefficient if we were to interact directly with the blockchain.
 
 ## 1. Overview
 
 The blockchain indexing application is written in C++, and leverages on LevelDB for on-disk key-value datastore to index blockchain data on disk. The application also implements a key-value database stored in memory, for fast access and retrieval of blockchain data.
 
-The application provides 3 indexes in accessing blockchain data. Mock REST endpoints are included in the description of the indexes and the various callback functions are implemented in the application (BlockchainIndexerMain.cpp), but the HTTP interfaacing layer is not provided for this project for simplicity. 
+The application provides 3 indexes in accessing blockchain data. Mock REST endpoints are included in the description of the indexes and the various callback functions are implemented in the application code (BlockchainIndexerMain.cpp), but the HTTP interfaacing layer is not provided for this project for the sake of simplicity. 
 
-In addition, the indexer only considers a block to be valid when it has a configured x-confirmations. The configurations is tuned to be at 6, since attackers are unlikely to amass more than 10% of total compute on the Bitcoin network.
+In addition, the indexer is developed such that it only considers a block to be valid when it has x-confirmations, and this value is a configurable parameter. The current configuration is tuned to be at 6, since attackers are unlikely to amass more than 10% of total compute on the Bitcoin network.
 
 ## 2. Indexes
 
