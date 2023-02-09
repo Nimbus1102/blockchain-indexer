@@ -32,10 +32,21 @@ bool getBlock(std::string hash, BlockchainIndexer::Block& block)
     return cacheDatabase->getBlock(hash, block);
 }
 
+// callback function to be used to get block from that is currently the max height stored in the index
+bool getMaxHeightBlock(BlockchainIndexer::Block& block)
+{
+    return cacheDatabase->getBlockWithMaxHeight(block);
+}
+
 // callback function to be used to get block from block height
 bool getBlockWithHeight(int height, BlockchainIndexer::Block& block)
 {
     return cacheDatabase->getBlockWithHeight(height, block);
+}
+
+bool getAllBlocks(std::vector<BlockchainIndexer::Block>& blocks)
+{
+    return cacheDatabase->getAllBlocks(blocks);
 }
 
 // callback function to be used to get transactions in block from block height
@@ -50,10 +61,27 @@ bool getTransactionsWithHash(std::string hash, std::vector<BlockchainIndexer::Tr
     return cacheDatabase->getBlockTransactions(hash, transactions);
 }
 
-// callback function to be used to get all unspent transactions in an address
+bool getTransactionWithId(std::string transId, BlockchainIndexer::Transaction& transaction)
+{
+    return cacheDatabase->getTransactionsWithId(transId, transaction);
+}
+
+// callback function to be used to get all updated transactions for an address
 bool getAddressTransactions(std::string address, std::vector<BlockchainIndexer::TransactionOutput>& transactions)
 {
     return cacheDatabase->getAddressTransactions(address, transactions);
+}
+
+// callback function to be used to get all spent transactions for an address
+bool getAddressInputTransactions(std::string address, std::vector<BlockchainIndexer::TransactionInput>& transactions)
+{
+    return cacheDatabase->getAddressInputTransactions(address, transactions);
+}
+
+// callback function to be used to get all output transactions for an address
+bool getAddressOutputTransactions(std::string address, std::vector<BlockchainIndexer::TransactionOutput>& transactions)
+{
+    return cacheDatabase->getAddressOutputTransactions(address, transactions);
 }
 
 void runReader()

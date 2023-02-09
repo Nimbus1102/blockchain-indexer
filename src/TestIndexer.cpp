@@ -86,14 +86,28 @@ bool TestIndexer::runAddressTests()
         json tAddress = json::parse(f);
         std::string address = tAddress["address"];
         
-        // run tests
+        // updated transactions test
         bool result = true;
         result = (getCachedTransactionsFromAddress(address, tAddress) && result);
         result = (getAddressTransactionsFromAddress(address, tAddress) && result);
 
-        if (result != tAnswer[std::to_string(idx)]["answer"])
+        if (result != tAnswer[std::to_string(idx)]["updatedanswer"])
         {
-            std::cout << "Address test" + std::to_string(idx) + " failed." << std::endl;
+            std::cout << "Address updated transactions test" + std::to_string(idx) + " failed." << std::endl;
+            return false;
+        }
+
+        // input transactions test
+        if (getCachedInputTransactionsFromAddress(address, tAddress) != tAnswer[std::to_string(idx)]["inputanswer"])
+        {
+            std::cout << "Address input transactions test" + std::to_string(idx) + " failed." << std::endl;
+            return false;
+        }
+
+        // output transactions test
+        if (getCachedOutputTransactionsFromAddress(address, tAddress) != tAnswer[std::to_string(idx)]["outputanswer"])
+        {
+            std::cout << "Address output transactions test" + std::to_string(idx) + " failed." << std::endl;
             return false;
         }
     }
@@ -313,6 +327,66 @@ bool TestIndexer::getCachedTransactionsFromAddress(std::string& aAddress, json& 
 {
     std::vector<TransactionOutput> outputs;
     if (db->getAddressTransactions(aAddress, outputs))
+    {
+        for (auto& test : aTest["transactions"])
+        {
+            bool found = false;
+            std::string test_string = test["txid"];
+            for (auto& out : outputs)
+            {
+                if (out.txOutputId == test_string)
+                {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
+bool TestIndexer::getCachedInputTransactionsFromAddress(std::string& aAddress, json& aTest)
+{
+    std::vector<TransactionInput> inputs;
+    if (db->getAddressInputTransactions(aAddress, inputs))
+    {
+        for (auto& test : aTest["transactions"])
+        {
+            bool found = false;
+            std::string test_string = test["txid"];
+            for (auto& in : inputs)
+            {
+                if (in.txOutputId == test_string)
+                {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
+bool TestIndexer::getCachedOutputTransactionsFromAddress(std::string& aAddress, json& aTest)
+{
+    std::vector<TransactionOutput> outputs;
+    if (db->getAddressOutputTransactions(aAddress, outputs))
     {
         for (auto& test : aTest["transactions"])
         {

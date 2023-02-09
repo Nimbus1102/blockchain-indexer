@@ -46,8 +46,8 @@
     },
     "10":
     {
-        "answer": true,
-        "block-info": "prevhash-a956e9bb1feb93499ac02a268f51ed7141a0fb5035b20eec3fd440477224607c-nexthash-2cc1bb07303a68587da4fa33e9ec09885b26899d58ec498a264242ca032565a3-merkleroot-3816d153d3f95d6c6b3a504b0afd64322b00ccc0e2a91ce336a0083d1818bb85-size-2714-weight-10421-height-148-confirmations-55-transactionnum-8-ts-1635739452"
+        "answer": false,
+        "block-info": ""
     },
     "11":
     {

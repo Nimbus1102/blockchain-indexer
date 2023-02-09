@@ -44,6 +44,8 @@ private:
 
     // method for address test with cache database
     bool getCachedTransactionsFromAddress(std::string& aAddress, json& aTest);
+    bool getCachedInputTransactionsFromAddress(std::string& aAddress, json& aTest);
+    bool getCachedOutputTransactionsFromAddress(std::string& aAddress, json& aTest);
 
     // method for address test with leveldb database
     bool getAddressTransactionsFromAddress(std::string& aAddress, json& aTest);

@@ -1,26 +1,38 @@
 {
     "1":
     {
-        "answer": true
+        "updatedanswer": true,
+        "inputanswer": false,
+        "outputanswer": true
     },
     "2":
     {
-        "answer": false
+        "updatedanswer": false,
+        "inputanswer": true,
+        "outputanswer": true
     },
     "3":
     {
-        "answer": true
+        "updatedanswer": true,
+        "inputanswer": false,
+        "outputanswer": true
     },
     "4":
     {
-        "answer": false
+        "updatedanswer": false,
+        "inputanswer": false,
+        "outputanswer": false
     },
     "5":
     {
-        "answer": true
+        "updatedanswer": true,
+        "inputanswer": false,
+        "outputanswer": true
     },
     "6":
     {
-        "answer": false
+        "updatedanswer": false,
+        "inputanswer": true,
+        "outputanswer": true
     }
 }

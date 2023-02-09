@@ -13,6 +13,10 @@ CacheDatabase::CacheDatabase()
     , transactionMutex()
     , addressTransactionsCache()
     , addressTransactionsMutex()
+    , addressInputTransactionsCache()
+    , addressInputTransactionsMutex()
+    , addressOutputTransactionsCache()
+    , addressOutputTransactionsMutex()
 {
 }
 
@@ -64,7 +68,7 @@ void CacheDatabase::cacheAddressTransaction(Transaction& aTransaction)
             address = transactionCache[tx.txOutputId].outputs[tx.txOutputIdx].scriptPubKeyAddress;
         }
 
-        // remove transaction from address transaction container
+        // remove transaction from address updated transactions
         if (addressTransactionsCache.find(address) != addressTransactionsCache.end())
         {
             for (int i = 0; i < addressTransactionsCache[address].size(); ++i)
@@ -77,18 +81,44 @@ void CacheDatabase::cacheAddressTransaction(Transaction& aTransaction)
                 }
             }
         }
+
+        {
+            // add to spent transaction
+            std::lock_guard<std::mutex> tLock(addressInputTransactionsMutex);
+            if (addressInputTransactionsCache.find(address) == addressInputTransactionsCache.end())
+            {
+                addressInputTransactionsCache[address] = std::vector<TransactionInput>();
+            }
+
+            addressInputTransactionsCache[address].push_back(tx);
+        }
     }
 
     for (auto& tx : aTransaction.outputs)
     {        
         if (tx.scriptPubKeyType != "nulldata")
         {
+            // add to address updated transactions
             if (addressTransactionsCache.find(tx.scriptPubKeyAddress) == addressTransactionsCache.end())
             {
                 addressTransactionsCache[tx.scriptPubKeyAddress] = std::vector<TransactionOutput>();
             }
 
             addressTransactionsCache[tx.scriptPubKeyAddress].push_back(tx);
+
+            {
+                // add to out transaction
+                std::lock_guard<std::mutex> tLock(addressOutputTransactionsMutex);
+
+                if (addressOutputTransactionsCache.find(tx.scriptPubKeyAddress) == addressOutputTransactionsCache.end())
+                {
+                    addressOutputTransactionsCache[tx.scriptPubKeyAddress] = std::vector<TransactionOutput>();
+                }
+
+                addressOutputTransactionsCache[tx.scriptPubKeyAddress].push_back(tx);
+
+            }
+
         }
     }
 }
@@ -121,6 +151,21 @@ bool CacheDatabase::getBlockWithHeight(int aHeight, Block& aBlock)
     return getBlock(blockHeightCache[aHeight], aBlock);
 }
 
+bool CacheDatabase::getAllBlocks(std::vector<Block>& aBlocks)
+{
+    std::lock_guard<std::mutex> tLock(blockHeightMutex);
+    for (int i = highestHeight; i >= 0; --i)
+    {
+        Block tmp;
+        if (getBlock(blockHeightCache[i], tmp))
+        {
+            aBlocks.push_back(tmp);
+        }
+    }
+
+    return true;
+}
+
 bool CacheDatabase::getBlockTransactions(int aHeight, std::vector<Transaction>& aTransactions)
 {
     Block tmp;
@@ -145,6 +190,19 @@ bool CacheDatabase::getBlockTransactions(std::string aHash, std::vector<Transact
     return false;
 }
 
+bool CacheDatabase::getTransactionsWithId(std::string aTransId, Transaction& aTransaction)
+{
+    std::lock_guard<std::mutex> tLock(transactionMutex);
+    if (transactionCache.find(aTransId) != transactionCache.end())
+    {
+        aTransaction = transactionCache[aTransId];
+        return true;
+    }
+    
+    return false;
+}
+
+
 bool CacheDatabase::getAddressTransactions(std::string aAddress, std::vector<TransactionOutput>& aTransactions)
 {
     std::lock_guard<std::mutex> tLock(addressTransactionsMutex);
@@ -154,6 +212,30 @@ bool CacheDatabase::getAddressTransactions(std::string aAddress, std::vector<Tra
     }
 
     aTransactions = addressTransactionsCache[aAddress];
+    return true;
+}
+
+bool CacheDatabase::getAddressInputTransactions(std::string aAddress, std::vector<TransactionInput>& aTransactions)
+{
+    std::lock_guard<std::mutex> tLock(addressInputTransactionsMutex);
+    if (addressInputTransactionsCache.find(aAddress) == addressInputTransactionsCache.end())
+    {
+        return false;
+    }
+
+    aTransactions = addressInputTransactionsCache[aAddress];
+    return true;
+}
+
+bool CacheDatabase::getAddressOutputTransactions(std::string aAddress, std::vector<TransactionOutput>& aTransactions)
+{
+    std::lock_guard<std::mutex> tLock(addressOutputTransactionsMutex);
+    if (addressOutputTransactionsCache.find(aAddress) == addressOutputTransactionsCache.end())
+    {
+        return false;
+    }
+
+    aTransactions = addressOutputTransactionsCache[aAddress];
     return true;
 }
 
