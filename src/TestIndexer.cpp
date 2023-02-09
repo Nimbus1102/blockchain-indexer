@@ -349,13 +349,13 @@ bool TestIndexer::getAddressTransactionsFromAddress(std::string& aAddress, json&
             // check if UTXO was recorded first
             std::stringstream trans_out;
             std::string txid = test["txid"];
-            std::cout << trans_out.str() << std::endl;
+            trans_out << "txo-trans-id-" << txid << "-idx-" << test["n"];
 
             if (out_string.find(trans_out.str()) != std::string::npos)
             {
                 // check if UTXO was spent
                 std::stringstream trans_in;
-                std::cout << trans_in.str() << std::endl;
+                trans_in << "spent-trans-id-" << txid << "-idx-" << test["n"];
                 if (out_string.find(trans_in.str()) != std::string::npos)
                 {
                     // UTXO has been spent
