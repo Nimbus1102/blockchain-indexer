@@ -18,31 +18,31 @@ The application provides 4 indexes: block index, block transaction index, transa
 
 Block index enables clients to query block data quickly by height and hash, and query blocks sorted by height (decreasing order).
 
-- `/api/blocks`: block[] - (BlockchainIndexMain.cpp::getAllBlocks)
-- `/api/blocks?maxHeight=`: block - (BlockchainIndexMain.cpp::getMaxHeightBlock)
-- `/api/blocks/{height}`: block - (BlockchainIndexMain.cpp::getBlockWithHeight)
-- `/api/blocks/{hash}`: block - (BlockchainIndexMain.cpp::getBlock)
+- `/api/blocks`: block[] - *(BlockchainIndexMain.cpp::getAllBlocks)*
+- `/api/blocks?maxHeight=`: block - *(BlockchainIndexMain.cpp::getMaxHeightBlock)*
+- `/api/blocks/{height}`: block - *(BlockchainIndexMain.cpp::getBlockWithHeight)*
+- `/api/blocks/{hash}`: block - *(BlockchainIndexMain.cpp::getBlock)*
 
 ### 2. Block Transactions Index
 
 Block transactions index provides clients the ability to query transactions quickly within a block, given its height or hash.
 
-- `/api/blocks/{hash}/transactions`: transaction[] - (BlockchainIndexMain.cpp::getTransactionsWithHash)
-- `/api/blocks/{height}/transactions`: transaction[] - (BlockchainIndexMain.cpp::getTransactionsWithHeight)
+- `/api/blocks/{hash}/transactions`: transaction[] - *(BlockchainIndexMain.cpp::getTransactionsWithHash)*
+- `/api/blocks/{height}/transactions`: transaction[] - *(BlockchainIndexMain.cpp::getTransactionsWithHeight)*
 
 ### 3. Transaction Index
 
 Transaction index provides clients the option to query all transactions from the transaction id.
 
-- `/api/transaction/{transaction_id}/transaction`: transaction - (BlockchainIndexMain.cpp::getTransactionWithId)
+- `/api/transaction/{transaction_id}/transaction`: transaction - *(BlockchainIndexMain.cpp::getTransactionWithId)*
 
 ### 4. Address Transaction Index
 
 Address transaction index provides clients the option to query transactions using bitcoin addresses. The application provides 3 endpoints, where client can query for the updated UTXO, all Vin from the address, and all Vout from the address.
 
-- `/api/addresses/{address}/transactions`: transaction[]
-- `/api/addresses/{address}/input_transactions`: transaction[]
-- `/api/addresses/{address}/output_transactions`: transaction[]
+- `/api/addresses/{address}/transactions`: transaction[] - *(BlockchainIndexMain.cpp::getAddressTransactions)*
+- `/api/addresses/{address}/input_transactions`: transaction[] - *(BlockchainIndexMain.cpp::getAddressInputTransactions)*
+- `/api/addresses/{address}/output_transactions`: transaction[] - *(BlockchainIndexMain.cpp::getAddressOutputTransactions)*
 
 ## 3. System Design
 
@@ -54,7 +54,7 @@ The application have 5 main components:
 4. SimpleMiddleware
 5. TestIndexer
 
-The application is designed to mimick real-time updates received by the bitcoin network. When a new block is added into the blockchain, it is simulated with the **BlockchainReader**. The BlockchainReader serves to digest the blockchain data file, and persistently and asynchronously send block data using the **SimpleMiddleware** to interested subscribers with a configured period. 
+The application is designed to mimick real-time updates received by the bitcoin network. When a new block is added into the blockchain, it is simulated with the **BlockchainReader**. The BlockchainReader digests the blockchain data file, and will persistently and asynchronously send block data using the **SimpleMiddleware** to interested subscribers. The persistence is sent over using a configured period. 
 
 The **BlockIndexer** component and **CacheDatabase** component is instantiated and managed in a separate thread, and processes every new block data they receive. The BlockIndexer leverages on **LevelDB** as our on-disk database, which its underlying implementation is a key-value datastore for fast access and retrieval of blockchain data. The CacheDatabase implements data storage of the blockchain information in memory, and similarly use a key-value implementation to enable fast accessing and retrieval of blockchain information.
 
