@@ -25,7 +25,6 @@ std::shared_ptr<BlockchainIndexer::CacheDatabase> cacheDatabase;
 std::shared_ptr<BlockchainIndexer::BlockListener> indexSubscriber;
 std::shared_ptr<BlockchainIndexer::BlockchainReader> blockchainReader;
 std::shared_ptr<BlockchainIndexer::BlockchainIndexer> blockchainIndexer;
-std::string configFilePath = "/blockchain-indexer/config/ConfigFile.xml";
 
 // callback function to be used to get block from block hash
 bool getBlock(std::string hash, BlockchainIndexer::Block& block)
@@ -104,6 +103,8 @@ void runIndexer()
 
 int main(const int argc, const char** const argv)
 {
+    std::string configFilePath = argv[1];
+
     // get config
     BlockchainIndexer::ConfigFileReader configReader;
     configReader.init(configFilePath);
@@ -133,7 +134,7 @@ int main(const int argc, const char** const argv)
     readerThread.join();
     indexerThread.join();
 
-    if (argc > 1 && argv[1] == "test")
+    if (config.runTest)
     {
         // run test cases
         std::cout << "Running test cases." << std::endl;

@@ -6,4 +6,4 @@ services:
       context: ..
 
     image: blockchain-indexer/indexer
-    command: bash -c "cd /blockchain-indexer/build/bin && ./blockchain_indexer test"
+    command: bash -c "cd /blockchain-indexer/build/bin && ./blockchain_indexer /blockchain-indexer/config/TestConfigFile.xml"

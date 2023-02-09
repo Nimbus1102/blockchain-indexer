@@ -16,6 +16,7 @@ struct ProjectConfig
     std::string databaseDirectory;
 
     // test parameters
+    bool runTest;
     int numBlockTestCases;
     int numAddressTestCases;
     std::string blockTestDirectory;
