@@ -4,6 +4,7 @@
 #include <string>
 #include <limits>
 #include <fstream>
+#include <sstream>
 #include <iostream>
 #include <nlohmann/json.hpp>
 
@@ -37,15 +38,15 @@ private:
     bool getCachedTransactionsFromBlockHash(std::string aBlockHash, Block& tBlock);
 
     // methods for block tests with leveldb database
-    bool getBlockInfoFromBlockHeight(int aBlockHeight, std::string aAnswer);
-    bool getBlockInfoFromBlockHash(std::string aBlockHash, std::string aAnswer);
-    bool getValueFromTransactionIdxAndId(std::string aTransactionId, int aIdx, double aAnswer);
+    bool getBlockInfoFromBlockHeight(int aBlockHeight, std::string aTest);
+    bool getBlockInfoFromBlockHash(std::string aBlockHash, std::string aTest);
+    bool getValueFromTransactionIdxAndId(std::string aTransactionId, int aIdx, double aTest);
 
     // method for address test with cache database
-    bool getCachedTransactionsFromAddress(std::string& aAddress, json& tAnswer);
+    bool getCachedTransactionsFromAddress(std::string& aAddress, json& aTest);
 
     // method for address test with leveldb database
-    bool getAddressTransactionsFromAddress(std::string aTransactionId, int aIdx, std::string aAnswer);
+    bool getAddressTransactionsFromAddress(std::string& aAddress, json& aTest);
 
     int numBlockTests;
     int numAddressTests;

@@ -10,7 +10,7 @@
     <!-- test parameters -->
     <runTest>true</runTest>
     <numBlockTestCases>12</numBlockTestCases>
-    <numAddressTestCases>0</numAddressTestCases>
+    <numAddressTestCases>6</numAddressTestCases>
     <blockTestDirectory>/blockchain-indexer/test/block_tests/</blockTestDirectory>
     <addressTestDirectory>/blockchain-indexer/test/address_tests/</addressTestDirectory>
 

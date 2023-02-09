@@ -25,7 +25,7 @@ std::shared_ptr<BlockchainIndexer::CacheDatabase> cacheDatabase;
 std::shared_ptr<BlockchainIndexer::BlockListener> indexSubscriber;
 std::shared_ptr<BlockchainIndexer::BlockchainReader> blockchainReader;
 std::shared_ptr<BlockchainIndexer::BlockchainIndexer> blockchainIndexer;
-std::string configFilePath = "/home/niven/blockchain-indexer/config/ConfigFile.xml";
+std::string configFilePath = "/blockchain-indexer/config/ConfigFile.xml";
 
 // callback function to be used to get block from block hash
 bool getBlock(std::string hash, BlockchainIndexer::Block& block)
@@ -69,7 +69,7 @@ void runIndexer()
 {
     std::cout << "Starting indexing logic thread." << std::endl;
     
-    while (!reachedEnd.load())
+    while (true)
     {
         if (indexSubscriber->haveNewMessage())
         {
@@ -88,6 +88,13 @@ void runIndexer()
             else
             {
                 std::cout << "Block confirmation below x-confirmation number, discarding." << std::endl;
+            }
+        }
+        else
+        {
+            if (reachedEnd.load())
+            {
+                break;
             }
         }
     }
@@ -139,7 +146,15 @@ int main(const int argc, const char** const argv)
         else
         {
             std::cout << "Failed block test cases." << std::endl;
+        }
 
+        if (tester.runAddressTests())
+        {
+            std::cout << "Passed address test cases." << std::endl;
+        }
+        else
+        {
+            std::cout << "Failed address test cases." << std::endl;
         }
     }
 

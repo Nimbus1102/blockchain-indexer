@@ -26,6 +26,7 @@ void BlockchainReader::init(std::string& aFilename, int aMaxBlocks, int aThreadP
     // get blockchain data
     std::ifstream f(fileName);
     blockchainData = json::parse(f);
+    std::cout << blockchainData.size() << std::endl;
 }
 
 void BlockchainReader::addMiddleware(std::shared_ptr<Middleware>& aMiddleware)

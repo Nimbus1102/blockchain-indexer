@@ -75,15 +75,25 @@ bool TestIndexer::runBlockTests()
 
 bool TestIndexer::runAddressTests()
 {
+    std::string answerFilePath = addressTestDir + "answer.json";
+    std::ifstream fAns(answerFilePath);
+    json tAnswer = json::parse(fAns);
+
     for (int idx = 1; idx <= numAddressTests; ++idx)
     {
-        std::string filePath = addressTestDir + "test" + std::to_string(idx);
+        std::string filePath = addressTestDir + "test" + std::to_string(idx) + ".json";
         std::ifstream f(filePath);
-        json tAnswer = json::parse(f);
-        std::string address = tAnswer["address"];
+        json tAddress = json::parse(f);
+        std::string address = tAddress["address"];
         
-        if (!getCachedTransactionsFromAddress(address, tAnswer))
+        // run tests
+        bool result = true;
+        result = (getCachedTransactionsFromAddress(address, tAddress) && result);
+        result = (getAddressTransactionsFromAddress(address, tAddress) && result);
+
+        if (result != tAnswer[std::to_string(idx)]["answer"])
         {
+            std::cout << "Address test" + std::to_string(idx) + " failed." << std::endl;
             return false;
         }
     }
@@ -257,62 +267,112 @@ bool TestIndexer::getCachedTransactionsFromBlockHash(std::string aBlockHash, Blo
     return false;
 }
 
-bool TestIndexer::getBlockInfoFromBlockHeight(int aBlockHeight, std::string aAnswer)
+bool TestIndexer::getBlockInfoFromBlockHeight(int aBlockHeight, std::string aTest)
 {
     std::string info;
     if (indexer->getBlockWithHeight(aBlockHeight, info))
     {
-        if (info == aAnswer)
+        if (info == aTest)
         {
             return true;
         }
-
-        return false;
     }
 
     return false;
 }
 
-bool TestIndexer::getBlockInfoFromBlockHash(std::string aBlockHash, std::string aAnswer)
+bool TestIndexer::getBlockInfoFromBlockHash(std::string aBlockHash, std::string aTest)
 {
     std::string info;
     if (indexer->getBlockInformation(aBlockHash, info))
     {
-        if (info == aAnswer)
+        if (info == aTest)
         {
             return true;
         }
-
-        return false;
     }
 
     return false;
 }
 
-bool TestIndexer::getValueFromTransactionIdxAndId(std::string aTransactionId, int aIdx, double aAnswer)
+bool TestIndexer::getValueFromTransactionIdxAndId(std::string aTransactionId, int aIdx, double aTest)
 {
     double val;
     if (indexer->getTransactionValue(aTransactionId, aIdx, val))
     {
-        if (std::abs(val - aAnswer) < DOUBLE_EPSILON)
+        if (std::abs(val - aTest) < DOUBLE_EPSILON)
         {
             return true;
         }
-
-        return false;
     }
 
     return false;
 }
 
-bool TestIndexer::getCachedTransactionsFromAddress(std::string& aAddress, json& tAnswer)
+bool TestIndexer::getCachedTransactionsFromAddress(std::string& aAddress, json& aTest)
 {
-    return true;
+    std::vector<TransactionOutput> outputs;
+    if (db->getAddressTransactions(aAddress, outputs))
+    {
+        for (auto& test : aTest["transactions"])
+        {
+            bool found = false;
+            std::string test_string = test["txid"];
+            for (auto& out : outputs)
+            {
+                if (out.txOutputId == test_string)
+                {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    return false;
 }
 
-bool TestIndexer::getAddressTransactionsFromAddress(std::string aTransactionId, int aIdx, std::string aAnswer)
+bool TestIndexer::getAddressTransactionsFromAddress(std::string& aAddress, json& aTest)
 {
-    return true;
+    std::string out_string;
+    if (indexer->getAddressTransactions(aAddress, out_string))
+    {
+        for (auto& test : aTest["transactions"])
+        {
+            // check if UTXO was recorded first
+            std::stringstream trans_out;
+            std::string txid = test["txid"];
+            std::cout << trans_out.str() << std::endl;
+
+            if (out_string.find(trans_out.str()) != std::string::npos)
+            {
+                // check if UTXO was spent
+                std::stringstream trans_in;
+                std::cout << trans_in.str() << std::endl;
+                if (out_string.find(trans_in.str()) != std::string::npos)
+                {
+                    // UTXO has been spent
+                    return false;
+                }
+            }
+            else
+            {
+                // UTXO not found
+                return false; 
+            }
+        }
+
+        return true;
+    }
+
+    return false;
 }
 
 }

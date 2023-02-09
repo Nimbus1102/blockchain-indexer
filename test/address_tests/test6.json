@@ -1,0 +1,47 @@
+{
+    "address": "mwsZw8nF7pKxWH8eoKL9tPxTpaFkz7QeLU",
+    "transactions": [
+        {
+            "txid": "63a9564704117aaece1dd910a5ee3f83fa42c9439e0523a2b991d553ccc52f2c",
+            "value": 10.3294284,
+            "n": 2,
+            "scriptPubKey": {
+                "asm": "OP_DUP OP_HASH160 b36814fd26190b321aa985809293a41273cfe15e OP_EQUALVERIFY OP_CHECKSIG",
+                "hex": "76a914b36814fd26190b321aa985809293a41273cfe15e88ac",
+                "reqSigs": 1,
+                "type": "pubkeyhash",
+                "addresses": [
+                    "mwsZw8nF7pKxWH8eoKL9tPxTpaFkz7QeLU"
+                ]
+            }
+        },
+        {
+            "txid": "8f7675bfcafd1befd0e699b67ef88fc5a751fc5967813d3fede8e3ab2397ec39",
+            "value": 10.3291242,
+            "n": 1,
+            "scriptPubKey": {
+                "asm": "OP_DUP OP_HASH160 b36814fd26190b321aa985809293a41273cfe15e OP_EQUALVERIFY OP_CHECKSIG",
+                "hex": "76a914b36814fd26190b321aa985809293a41273cfe15e88ac",
+                "reqSigs": 1,
+                "type": "pubkeyhash",
+                "addresses": [
+                "mwsZw8nF7pKxWH8eoKL9tPxTpaFkz7QeLU"
+                ]
+            }
+        },
+        {
+            "txid": "190a8e8b8e993b4bd7d054620e6a2058c09fa888a1391dc3fe62035679670970",
+            "value": 33.3296652,
+            "n": 1,
+            "scriptPubKey": {
+                "asm": "OP_DUP OP_HASH160 b36814fd26190b321aa985809293a41273cfe15e OP_EQUALVERIFY OP_CHECKSIG",
+                "hex": "76a914b36814fd26190b321aa985809293a41273cfe15e88ac",
+                "reqSigs": 1,
+                "type": "pubkeyhash",
+                "addresses": [
+                    "mwsZw8nF7pKxWH8eoKL9tPxTpaFkz7QeLU"
+                ]
+            }
+        }
+    ]
+}

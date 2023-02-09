@@ -80,7 +80,7 @@ void CacheDatabase::cacheAddressTransaction(Transaction& aTransaction)
     }
 
     for (auto& tx : aTransaction.outputs)
-    {
+    {        
         if (tx.scriptPubKeyType != "nulldata")
         {
             if (addressTransactionsCache.find(tx.scriptPubKeyAddress) == addressTransactionsCache.end())
@@ -88,7 +88,7 @@ void CacheDatabase::cacheAddressTransaction(Transaction& aTransaction)
                 addressTransactionsCache[tx.scriptPubKeyAddress] = std::vector<TransactionOutput>();
             }
 
-            addressTransactionsCache[tx.scriptPubKeyAddress].push_back(tx);            
+            addressTransactionsCache[tx.scriptPubKeyAddress].push_back(tx);
         }
     }
 }
