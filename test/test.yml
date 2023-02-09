@@ -2,6 +2,8 @@ version: '3.3'
 
 services:
   indexer:
-    build: .
+    build:
+      context: ..
+
     image: blockchain-indexer/indexer
     command: bash -c "cd /blockchain-indexer/build/bin && ./blockchain_indexer test"
